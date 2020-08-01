@@ -56,6 +56,7 @@ function! s:init_buffer_commands() abort " {{{1
   command! -buffer WikiPageRename         call wiki#page#rename_ask()
   command! -buffer WikiPageToc            call wiki#page#create_toc(0)
   command! -buffer WikiPageTocLocal       call wiki#page#create_toc(1)
+  command! -buffer WikiPageRefile         call wiki#page#refile()
   command! -buffer -range=% -nargs=* WikiExport
         \ call wiki#page#export(<line1>, <line2>, <f-args>)
 
@@ -95,6 +96,7 @@ function! s:init_buffer_mappings() abort " {{{1
   nnoremap <silent><buffer> <plug>(wiki-page-rename)          :WikiPageRename<cr>
   nnoremap <silent><buffer> <plug>(wiki-page-toc)             :WikiPageToc<cr>
   nnoremap <silent><buffer> <plug>(wiki-page-toc-local)       :WikiPageTocLocal<cr>
+  nnoremap <silent><buffer> <plug>(wiki-page-refile)          :WikiPageRefile<cr>
   nnoremap <silent><buffer> <plug>(wiki-export)               :WikiExport<cr>
   xnoremap <silent><buffer> <plug>(wiki-export)               :WikiExport<cr>
   nnoremap <silent><buffer> <plug>(wiki-tag-list)             :WikiTagList<cr>
@@ -152,6 +154,7 @@ function! s:init_buffer_mappings() abort " {{{1
           \ '<plug>(wiki-page-rename)' : '<leader>wr',
           \ '<plug>(wiki-page-toc)' : '<leader>wt',
           \ '<plug>(wiki-page-toc-local)' : '<leader>wT',
+          \ '<plug>(wiki-page-refile)' : '<leader>wq',
           \ '<plug>(wiki-export)' : '<leader>wp',
           \ 'x_<plug>(wiki-export)' : '<leader>wp',
           \ '<plug>(wiki-tag-list)' : '<leader>wsl',

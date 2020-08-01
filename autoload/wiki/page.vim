@@ -351,6 +351,22 @@ function! wiki#page#export(line1, line2, ...) abort " {{{1
 endfunction
 
 " }}}1
+function! wiki#page#refile() abort " {{{1
+  echo 'wiki: refile (page#sec::pos)'
+
+  let l:target = input('> ', '', 'customlist,wiki#complete#link')
+  let l:parts = split(l:target, '::')
+  echon "\n"
+  if empty(l:parts) | return | endif
+
+  let l:url = wiki#url#parse('wiki:' . l:parts[0])
+  let l:loc = get(l:parts, 1, '')
+
+  echo l:url
+  echo l:loc
+endfunction
+
+" }}}1
 
 function! s:rename_update_links(old, new) abort " {{{1
   let l:pattern  = '\v\[\[\/?\zs' . a:old . '\ze%(#.*)?%(\|.*)?\]\]'
