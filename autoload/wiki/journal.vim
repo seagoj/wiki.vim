@@ -1,12 +1,12 @@
 " A simple wiki plugin for Vim
 "
 " Maintainer: Karl Yngve Lervåg
-" Email:      karl.yngve@gmail.com
+" Email:	  karl.yngve@gmail.com
 "
 
 function! wiki#journal#make_note(...) abort " {{{1
   let l:date = (a:0 > 0 ? a:1
-        \ : strftime(g:wiki_journal.date_format[g:wiki_journal.frequency]))
+		\ : strftime(g:wiki_journal.date_format[g:wiki_journal.frequency]))
   call wiki#url#parse('journal:' . l:date).follow()
 endfunction
 
@@ -15,9 +15,9 @@ function! wiki#journal#copy_note() abort " {{{1
   let l:next = s:get_next_entry()
 
   let l:next_entry = wiki#paths#s(printf('%s/%s.%s',
-        \ b:wiki.root_journal, l:next, b:wiki.extension))
+		\ b:wiki.root_journal, l:next, b:wiki.extension))
   if !filereadable(l:next_entry)
-    execute 'write' l:next_entry
+	execute 'write' l:next_entry
   endif
 
   call wiki#url#parse('journal:' . l:next).follow()
@@ -30,7 +30,7 @@ function! wiki#journal#go(step) abort " {{{1
   let l:target = l:index + a:step
 
   if l:target >= len(l:links) || l:target < 0
-    return
+	return
   endif
 
   call wiki#url#parse('journal:' . l:links[l:target]).follow()
@@ -39,13 +39,16 @@ endfunction
 " }}}1
 function! wiki#journal#freq(frq) abort " {{{1
   if a:frq ==# 'daily'
-    return
+	return
   endif
   if a:frq ==# 'weekly' && g:wiki_journal.frequency !=# 'daily'
-    return
+	return
   endif
   if a:frq ==# 'monthly' && g:wiki_journal.frequency ==# 'monthly'
-    return
+	return
+  endif
+  if a:frq ==# 'quarterly' && g:wiki_journal.frequency ==# 'quarterly'
+	return
   endif
 
   let l:filedate = expand('%:t:r')
@@ -54,7 +57,7 @@ function! wiki#journal#freq(frq) abort " {{{1
   let l:date = l:filedate =~# l:rx ? l:filedate : strftime(l:fmt)
 
   call wiki#url#parse('journal:'
-        \ . wiki#date#format(l:date, g:wiki_journal.date_format[a:frq])).follow()
+		\ . wiki#date#format(l:date, g:wiki_journal.date_format[a:frq])).follow()
 endfunction
 
 " }}}1
@@ -65,39 +68,39 @@ function! wiki#journal#make_index() " {{{1
 
   let l:sorted_entries = {}
   for entry in entries
-    let date = wiki#date#parse_format(entry, g:wiki_journal.date_format.daily)
-    if has_key(sorted_entries, date.year)
-      let year_dict = sorted_entries[date.year]
-      if has_key(year_dict, date.month)
-        call add(year_dict[date.month], entry)
-      else
-        let year_dict[date.month] = [entry]
-      endif
-    else
-      let sorted_entries[date.year] = {date.month:[entry]}
-    endif
+	let date = wiki#date#parse_format(entry, g:wiki_journal.date_format.daily)
+	if has_key(sorted_entries, date.year)
+	  let year_dict = sorted_entries[date.year]
+	  if has_key(year_dict, date.month)
+		call add(year_dict[date.month], entry)
+	  else
+		let year_dict[date.month] = [entry]
+	  endif
+	else
+	  let sorted_entries[date.year] = {date.month:[entry]}
+	endif
   endfor
 
   " Specify the link prefix
   let l:prefix = g:wiki_journal.index_use_journal_scheme
-        \ ? 'journal:'
-        \ : '/' . g:wiki_journal.name . '/'
+		\ ? 'journal:'
+		\ : '/' . g:wiki_journal.name . '/'
 
   for year in sort(keys(sorted_entries))
-    let l:month_dict = sorted_entries[year]
-    put ='# ' . year
-    put =''
-    for month in sort(keys(month_dict))
-      let entries = month_dict[month]
-      let l:mname = wiki#date#get_month_name(month)
-      let l:mname = toupper(strcharpart(mname, 0, 1)) . strcharpart(mname, 1)
-      put ='## ' . mname
-      put =''
-      for entry in entries
-        put =wiki#link#template(l:prefix . entry, entry)
-      endfor
-      put =''
-    endfor
+	let l:month_dict = sorted_entries[year]
+	put ='# ' . year
+	put =''
+	for month in sort(keys(month_dict))
+	  let entries = month_dict[month]
+	  let l:mname = wiki#date#get_month_name(month)
+	  let l:mname = toupper(strcharpart(mname, 0, 1)) . strcharpart(mname, 1)
+	  put ='## ' . mname
+	  put =''
+	  for entry in entries
+		put =wiki#link#template(l:prefix . entry, entry)
+	  endfor
+	  put =''
+	endfor
   endfor
 endfunction
 
@@ -107,18 +110,19 @@ function! s:get_next_entry() abort " {{{1
   let l:current = expand('%:t:r')
 
   for [l:freq, l:fmt] in items(g:wiki_journal.date_format)
-    let l:rx = wiki#date#format_to_regex(l:fmt)
-    if l:current =~# l:rx
-      let l:date_dict = wiki#date#parse_format(l:current, l:fmt)
-      let l:date = printf('%4d-%2d-%2d',
-            \ l:date_dict.year, l:date_dict.month, l:date_dict.day)
-      let l:next = wiki#date#offset(l:date, {
-            \ 'daily' : '1 day',
-            \ 'weekly' : '1 week',
-            \ 'monthly' : '1 month',
-            \}[l:freq])
-      return wiki#date#format(l:next, l:fmt)
-    endif
+	let l:rx = wiki#date#format_to_regex(l:fmt)
+	if l:current =~# l:rx
+	  let l:date_dict = wiki#date#parse_format(l:current, l:fmt)
+	  let l:date = printf('%4d-%2d-%2d',
+			\ l:date_dict.year, l:date_dict.month, l:date_dict.day)
+	  let l:next = wiki#date#offset(l:date, {
+			\ 'daily' : '1 day',
+			\ 'weekly' : '1 week',
+			\ 'monthly' : '1 month',
+			\ 'quarter' : '1 quarter'
+			\}[l:freq])
+	  return wiki#date#format(l:next, l:fmt)
+	endif
   endfor
 
   throw printf('Error: %s was not matched by any date formats', l:current)
@@ -130,10 +134,10 @@ function! s:get_links() abort " {{{1
   let l:current = expand('%:t:r')
 
   for l:fmt in values(g:wiki_journal.date_format)
-    let l:rx = wiki#date#format_to_regex(l:fmt)
-    if l:current =~# l:rx
-      return s:get_links_generic(l:rx, l:fmt)
-    endif
+	let l:rx = wiki#date#format_to_regex(l:fmt)
+	if l:current =~# l:rx
+	  return s:get_links_generic(l:rx, l:fmt)
+	endif
   endfor
 
   return []
@@ -142,19 +146,19 @@ endfunction
 " }}}1
 function! s:get_links_generic(rx, fmt) abort " {{{1
   let l:globpat = wiki#paths#s(printf('%s/*.%s',
-        \ b:wiki.root_journal, b:wiki.extension))
+		\ b:wiki.root_journal, b:wiki.extension))
   let l:links = filter(map(glob(l:globpat, 0, 1),
-        \   'fnamemodify(v:val, '':t:r'')'),
-        \ 'v:val =~# a:rx')
+		\	'fnamemodify(v:val, '':t:r'')'),
+		\ 'v:val =~# a:rx')
 
   for l:cand in [
-        \ strftime(a:fmt),
-        \ expand('%:t:r'),
-        \]
-    if l:cand =~# a:rx && index(l:links, l:cand) == -1
-      call add(l:links, l:cand)
-      let l:sort = 1
-    endif
+		\ strftime(a:fmt),
+		\ expand('%:t:r'),
+		\]
+	if l:cand =~# a:rx && index(l:links, l:cand) == -1
+	  call add(l:links, l:cand)
+	  let l:sort = 1
+	endif
   endfor
 
   return get(l:, 'sort', 0) ? sort(l:links) : l:links
